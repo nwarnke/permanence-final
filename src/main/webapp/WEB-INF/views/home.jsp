@@ -7,9 +7,6 @@
         <title>Home</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
-        <p>This is the homepage!</p>
-    ${5+5}
-    ${hello}
+        <h1>Hello world and all creatures thereof.</h1>
     </body>
 </html>
