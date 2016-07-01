@@ -55,18 +55,20 @@
 
 
 		<!-- Servlet Spec -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-			<version>2.4</version>
-			<scope>provided</scope>
-		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet.jsp</groupId>
 			<artifactId>jsp-api</artifactId>
 			<version>2.1</version>
 			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+
 	</dependencies>
 
 	<repositories>
@@ -88,6 +90,11 @@
 					<source>${java.version}</source>
 					<target>${java.version}</target>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.tomcat.maven</groupId>
+				<artifactId>tomcat7-maven-plugin</artifactId>
+				<version>2.2</version>
 			</plugin>
 			<plugin>
 				<groupId>com.heroku.sdk</groupId>
