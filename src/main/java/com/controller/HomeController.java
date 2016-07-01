@@ -7,12 +7,15 @@ import com.dto.Vertex;
 import com.service.Service;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -34,6 +37,14 @@ public class HomeController {
 		ModelAndView modelAndView = new ModelAndView("home");
 		modelAndView.addObject("hello", "world");
 		return modelAndView;
+	}
+
+	@RequestMapping(value="upload", method = RequestMethod.POST)
+	public String upload(@RequestParam("file") MultipartFile file){
+		if(file.getSize() > 0)
+			return "isFile!";
+		else
+			return "error :(";
 	}
 
 	private JsonVertexLists convertToJsonList() {
