@@ -9,9 +9,10 @@
     </head>
     <body>
         <h1>Hello world and all creatures thereof.</h1>
-        <form action="<c:url value="/upload"/>" enctype="multipart/form-data" method="post">
+        <form action="<c:url value="/upload"/>" enctype="multipart/form-data" method="post" target="uploadTrg">
             <input type="file" name="file">
             <input type="submit">
         </form>
+    <iframe id="uploadTrg"></iframe>
     </body>
 </html>
