@@ -5,7 +5,7 @@ import com.dto.*;
 import java.util.*;
 
 public class Service {
-    public static List<Vertex> vertices = new ArrayList<Vertex>();
+    public static List<Vertex> vertices = new ArrayList<>();
 
     public static void calculatePermanence(Vertex vertex) {
         getNumberOfInternalConnections(vertex);
