@@ -7,6 +7,9 @@
 <script type="text/javascript">
     <%@ include file="../js/graph.js"%>
 </script>
+<style>
+    <%@ include file="../css/graph.css"%>
+</style>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
