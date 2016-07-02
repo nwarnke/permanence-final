@@ -5,7 +5,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     function load(){
-        console.log(window["uploadTrg"].document.body.innerHTML);
+        console.log(window["uploadTrg"].document.body.innerText);
     }
 </script>
 <html>
