@@ -77,10 +77,6 @@ public class HomeController {
 
 			previous = next;
 		}
-		for (Vertex vertice : service.getVertices()) {
-			System.out.println(vertice.getName());
-			System.out.println(vertice.getCommunity());
-		}
 
 		calculatePermanenceForAllVertices();
 		maxPermanence();
@@ -130,11 +126,7 @@ public class HomeController {
 			if (!service.getVertices().get(service.getVertices().indexOf(firstVertex)).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(secondVertex)))) {
 				firstVertex.getNeighbors().add(secondVertex);
 				secondVertex.getNeighbors().add(firstVertex);
-			} else {
-				System.out.println("Edge already exists");
 			}
-		} else {
-			System.out.println("Vertex not found");
 		}
 	}
 
