@@ -3,10 +3,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
    "http://www.w3.org/TR/html4/loose.dtd">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
+<script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    function load(){
-        console.log(window["uploadTrg"].document.body.innerText);
-    }
+    <%@ include file="../js/graph.js"%>
 </script>
 <html>
     <head>
@@ -20,6 +19,6 @@
             <input type="file" name="file">
             <input type="submit">
         </form>
-    <iframe id="uploadTrg" name="uploadTrg" onload="load()"></iframe>
+    <iframe id="uploadTrg" name="uploadTrg" onload="load()" style="display:none"></iframe>
     </body>
 </html>
