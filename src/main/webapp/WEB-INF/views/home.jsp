@@ -13,6 +13,6 @@
             <input type="file" name="file">
             <input type="submit">
         </form>
-    <iframe id="uploadTrg"></iframe>
+    <iframe id="uploadTrg" name="uploadTrg"></iframe>
     </body>
 </html>
