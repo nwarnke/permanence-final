@@ -17,7 +17,7 @@
 
     </head>
     <body id="body">
-        <h1>Hello world and all creatures thereof.</h1>
+        <h2>Upload a graph:</h2>
         <form action="<c:url value="/upload"/>" enctype="multipart/form-data" method="post" target="uploadTrg">
             <input type="file" name="file">
             <input type="submit">

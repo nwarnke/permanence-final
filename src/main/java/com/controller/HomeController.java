@@ -124,58 +124,9 @@ public class HomeController {
 		}
 	}
 
-	private void getMenu() throws IOException {
-		System.out.println("Now what would you like to do now?");
-		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
-		String input = "";
-		while (!input.equals("3")) {
-			System.out.println("1) Add edge");
-			System.out.println("2) Delete edge");
-			System.out.println("3) Exit");
-			input = bufferedReader.readLine();
-
-			if (input.equals("1")) {
-
-			} else if (input.equals("2")) {
-				System.out.println("Enter two vertices to remove the edge between: ");
-				input = bufferedReader.readLine();
-				String[] nodes = input.split(" ");
-				deleteEdge(nodes);
-				maxPermanence();
-				calculatePermanenceForAllVertices();
-				displayPermanenceForAllVertices();
-			} else if (input.equals("3")) {
-				return;
-			} else {
-				System.out.println("Please select a value between 1-3");
-			}
-		}
-	}
-
-	private void displayGraphInfo() {
-		System.out.print("Vertices:\n");
-
-		for (Vertex vertex : service.vertices) {
-			System.out.println("Name: " + vertex.getName());
-			System.out.print("Neighbors: ");
-			for (Vertex neighbor : vertex.getNeighbors()) {
-				System.out.print(neighbor.getName() + " ");
-			}
-			System.out.println();
-			System.out.println("Community: " + vertex.getCommunity());
-			System.out.println();
-		}
-	}
-
 	private void calculatePermanenceForAllVertices() {
 		for (Vertex vertex : service.vertices) {
 			service.calculatePermanence(vertex);
-		}
-	}
-
-	private void displayPermanenceForAllVertices() {
-		for (Vertex vertex : service.vertices) {
-			System.out.println("Permanence for vertex " + vertex.getName() + ": " + vertex.getPermanence());
 		}
 	}
 
