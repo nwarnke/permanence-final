@@ -24,7 +24,6 @@ import java.util.List;
 public class HomeController {
 
 	private Service service;
-	private MultipartFile multipartFile;
 
 	@Inject
 	public HomeController(Service service) {
@@ -33,14 +32,13 @@ public class HomeController {
 
 	@RequestMapping(value="/")
 	public ModelAndView test(HttpServletResponse response) throws IOException{
-		ModelAndView modelAndView = new ModelAndView("home");
-		modelAndView.addObject("hello", "world");
-		return modelAndView;
+		return new ModelAndView("home");
 	}
 
 	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public JsonVertexLists upload(@RequestParam("file") MultipartFile file) throws IOException {
+		service.vertices = new ArrayList<>();
 		InputStream inputStream = file.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line;

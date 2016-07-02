@@ -17,6 +17,8 @@ function load() {
         .nodes(jsonarry.nodes)
         .links(jsonarry.links);
 
+    d3.select('svg').remove();
+
     var svg = d3.select('body').append('svg')
         .attr('width', width)
         .attr('height', height);
