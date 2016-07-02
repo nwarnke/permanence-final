@@ -9,16 +9,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -39,12 +38,54 @@ public class HomeController {
 		return modelAndView;
 	}
 
-	@RequestMapping(value="upload", method = RequestMethod.POST)
-	public String upload(@RequestParam("file") MultipartFile file){
-		if(file.getSize() > 0)
-			return "isFile!";
-		else
-			return "error :(";
+	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public JsonVertexLists upload(@RequestParam("file") MultipartFile file) throws IOException {
+		InputStream inputStream = file.getInputStream();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+		String line;
+		String[] nodes;
+		while ((line = reader.readLine()) != null && !line.equals("")) {
+			nodes = line.split(" ");
+			Vertex firstVertex;
+			Vertex secondVertex;
+			if (!service.vertices.contains(new Vertex(nodes[0]))) {
+				service.vertices.add(new Vertex(nodes[0]));
+			}
+			if (!service.vertices.contains(new Vertex(nodes[1]))) {
+				service.vertices.add(new Vertex(nodes[1]));
+			}
+			firstVertex = service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0])));
+			secondVertex = service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1])));
+			addEdge(firstVertex, secondVertex);
+		}
+		inputStream.close();
+		reader.close();
+		int index = 1;
+
+		final Iterator<Vertex> iterator = service.vertices.iterator();
+		Vertex previous = iterator.next();
+		previous.setCommunity(getCharForNumber(index));
+		Vertex next;
+		while (iterator.hasNext()) {
+			next = iterator.next();
+
+			if(next.getNeighbors().contains(previous)){
+				next.setCommunity(getCharForNumber(index));
+			}else{
+				index++;
+				next.setCommunity(getCharForNumber(index));
+			}
+
+			previous = next;
+		}
+
+		calculatePermanenceForAllVertices();
+		maxPermanence();
+		calculatePermanenceForAllVertices();
+
+		return convertToJsonList();
+
 	}
 
 	private JsonVertexLists convertToJsonList() {
