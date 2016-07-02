@@ -6,14 +6,14 @@ function load() {
     }
 
     var jsonarry;
-
+    var nominal_stroke = 1.5;
     try {
         jsonarry = JSON.parse(data);
     } catch (e) {
         d3.select('svg').remove();
         $("#warning").css("display", "inline");
     }
-    var width = 640, height = 480;
+    var width = 1500, height = 750;
 
     var color = d3.scale.category20();
 
@@ -34,9 +34,7 @@ function load() {
         .data(jsonarry.links)
         .enter().append('line')
         .attr('class', 'link')
-        .style("stroke-width", function (d) {
-            return Math.sqrt(d.value);
-        });
+        .style("stroke-width", nominal_stroke);
 
     var node = svg.selectAll('.node')
         .data(jsonarry.nodes)
@@ -47,6 +45,7 @@ function load() {
             return color(d.group);
         })
         .call(force.drag);
+
 
     force.on("tick", function () {
         link.attr("x1", function (d) {
