@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class JsonVertexLists {
-    List<Node> nodes = new ArrayList<>();
-    List<Link> links = new ArrayList<>();
+    private List<Node> nodes = new ArrayList<>();
+    private List<Link> links = new ArrayList<>();
 
     public List<Node> getNodes() {
         return nodes;
