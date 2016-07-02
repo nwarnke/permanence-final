@@ -5,7 +5,7 @@ import com.dto.*;
 import java.util.*;
 
 public class Service {
-    public static List<Vertex> vertices = new ArrayList<>();
+    private static List<Vertex> vertices = new ArrayList<>();
 
     public static void calculatePermanence(Vertex vertex) {
         getNumberOfInternalConnections(vertex);
@@ -20,8 +20,12 @@ public class Service {
     public static void getNumberOfInternalConnections(Vertex vertex) {
         float internalConnections = 0;
         for (Vertex neighbor : vertex.getNeighbors()) {
-            if (neighbor.getCommunity().equals(vertex.getCommunity())) {
-                internalConnections++;
+            try {
+                if (neighbor.getCommunity().equals(vertex.getCommunity())) {
+                    internalConnections++;
+                }
+            }catch (Exception e){
+                e.printStackTrace();
             }
         }
         vertex.setNumOfInternalConnections(internalConnections);
@@ -78,5 +82,13 @@ public class Service {
         } else {
             vertex.setClusteringCoefficient(0);
         }
+    }
+
+    public static List<Vertex> getVertices() {
+        return vertices;
+    }
+
+    public static void setVertices(List<Vertex> vertices) {
+        Service.vertices = vertices;
     }
 }

@@ -38,7 +38,7 @@ public class HomeController {
 	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public JsonVertexLists upload(@RequestParam("file") MultipartFile file) throws IOException {
-		service.vertices = new ArrayList<>();
+		service.setVertices(new ArrayList<Vertex>());
 		InputStream inputStream = file.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		String line;
@@ -47,21 +47,21 @@ public class HomeController {
 			nodes = line.split(" ");
 			Vertex firstVertex;
 			Vertex secondVertex;
-			if (!service.vertices.contains(new Vertex(nodes[0]))) {
-				service.vertices.add(new Vertex(nodes[0]));
+			if (!service.getVertices().contains(new Vertex(nodes[0]))) {
+				service.getVertices().add(new Vertex(nodes[0]));
 			}
-			if (!service.vertices.contains(new Vertex(nodes[1]))) {
-				service.vertices.add(new Vertex(nodes[1]));
+			if (!service.getVertices().contains(new Vertex(nodes[1]))) {
+				service.getVertices().add(new Vertex(nodes[1]));
 			}
-			firstVertex = service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0])));
-			secondVertex = service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1])));
+			firstVertex = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0])));
+			secondVertex = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1])));
 			addEdge(firstVertex, secondVertex);
 		}
 		inputStream.close();
 		reader.close();
 		int index = 1;
 
-		final Iterator<Vertex> iterator = service.vertices.iterator();
+		final Iterator<Vertex> iterator = service.getVertices().iterator();
 		Vertex previous = iterator.next();
 		previous.setCommunity(getCharForNumber(index));
 		Vertex next;
@@ -77,6 +77,10 @@ public class HomeController {
 
 			previous = next;
 		}
+		for (Vertex vertice : service.getVertices()) {
+			System.out.println(vertice.getName());
+			System.out.println(vertice.getCommunity());
+		}
 
 		calculatePermanenceForAllVertices();
 		maxPermanence();
@@ -88,7 +92,7 @@ public class HomeController {
 
 	private JsonVertexLists convertToJsonList() {
 		JsonVertexLists jsonVertexLists = new JsonVertexLists();
-		for (Vertex vertex : service.vertices) {
+		for (Vertex vertex : service.getVertices()) {
 			Node node = new Node();
 			node.setName(vertex.getName());
 			node.setGroup(vertex.getCommunity());
@@ -96,8 +100,8 @@ public class HomeController {
 			jsonVertexLists.getNodes().add(node);
 			for (Vertex neighbor : vertex.getNeighbors()) {
 				Link link = new Link();
-				link.setSource(service.vertices.indexOf(new Vertex(vertex.getName())));
-				link.setTarget(service.vertices.indexOf(new Vertex(neighbor.getName())));
+				link.setSource(service.getVertices().indexOf(new Vertex(vertex.getName())));
+				link.setTarget(service.getVertices().indexOf(new Vertex(neighbor.getName())));
 				link.setValue(5);
 				jsonVertexLists.getLinks().add(link);
 			}
@@ -108,12 +112,22 @@ public class HomeController {
 
 
 	private static String getCharForNumber(int i) {
-		return i > 0 && i < 27 ? String.valueOf((char)(i + 64)) : null;
+		int count = 0;
+		if(i > 0 && i < 27){
+			return String.valueOf((char)(i + 64));
+		}else{
+			while(!(i > 0 && i < 27)){
+				i = i - 26;
+				count++;
+			}
+			return String.valueOf((char) (count + 64)) +
+					String.valueOf((char) (i + 64));
+		}
 	}
 
 	private void addEdge(Vertex firstVertex, Vertex secondVertex) {
-		if (service.vertices.contains(firstVertex) && service.vertices.contains(secondVertex)) {
-			if (!service.vertices.get(service.vertices.indexOf(firstVertex)).getNeighbors().contains(service.vertices.get(service.vertices.indexOf(secondVertex)))) {
+		if (service.getVertices().contains(firstVertex) && service.getVertices().contains(secondVertex)) {
+			if (!service.getVertices().get(service.getVertices().indexOf(firstVertex)).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(secondVertex)))) {
 				firstVertex.getNeighbors().add(secondVertex);
 				secondVertex.getNeighbors().add(firstVertex);
 			} else {
@@ -125,14 +139,14 @@ public class HomeController {
 	}
 
 	private void calculatePermanenceForAllVertices() {
-		for (Vertex vertex : service.vertices) {
+		for (Vertex vertex : service.getVertices()) {
 			service.calculatePermanence(vertex);
 		}
 	}
 
 	private void recalculatePermanenceWhenEdgeIsAddedOrRemovedFromLocalCommunity(String[] nodes) {
-		if (service.vertices.contains(new Vertex(nodes[0])) && service.vertices.contains(new Vertex(nodes[1]))) {
-			Vertex v1 = service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0])));
+		if (service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
+			Vertex v1 = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0])));
 			float oldNumberOfInternalConnections = v1.getNumOfInternalConnections();
 			float oldTotalNumberOfConnections = v1.getTotalNumOfConnections();
 			float oldClusteringCoefficient = v1.getClusteringCoefficient();
@@ -154,12 +168,12 @@ public class HomeController {
 	}
 
 	private void deleteEdge(String[] nodes) throws IOException {
-		if (service.vertices.contains(new Vertex(nodes[0])) && service.vertices.contains(new Vertex(nodes[1]))) {
-			if (service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))))) {
-				service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))).getNeighbors()
-						.remove(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))));
-				service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))).getNeighbors()
-						.remove(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))));
+		if (service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
+			if (service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))))) {
+				service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors()
+						.remove(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))));
+				service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))).getNeighbors()
+						.remove(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))));
 
 			} else {
 				System.out.println("Edge does not exist.");
@@ -174,21 +188,21 @@ public class HomeController {
 		String vertexCommunity = input.split(" ")[1];
 		Vertex vertex = new Vertex(vertexName);
 		vertex.setCommunity(vertexCommunity);
-		if (service.vertices.contains(vertex)) {
+		if (service.getVertices().contains(vertex)) {
 			System.out.println("Vertex with name" + vertex.getName() + " already added.");
 		} else {
-			service.vertices.add(vertex);
+			service.getVertices().add(vertex);
 		}
 	}
 
 	private void addEdge(String input) {
 		String[] nodes = input.split(" ");
-		if (nodes.length > 1 && service.vertices.contains(new Vertex(nodes[0])) && service.vertices.contains(new Vertex(nodes[1]))) {
-			if (!service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))))) {
-				service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))).getNeighbors()
-						.add(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))));
-				service.vertices.get(service.vertices.indexOf(new Vertex(nodes[1]))).getNeighbors()
-						.add(service.vertices.get(service.vertices.indexOf(new Vertex(nodes[0]))));
+		if (nodes.length > 1 && service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
+			if (!service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))))) {
+				service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors()
+						.add(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))));
+				service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))).getNeighbors()
+						.add(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))));
 			} else {
 				System.out.println("Edge already exists");
 			}
@@ -198,7 +212,7 @@ public class HomeController {
 	}
 
 	private float maxPermanence() {
-		int numOfVertices = service.vertices.size();
+		int numOfVertices = service.getVertices().size();
 		float sum = 0;
 		float oldSum = -1;
 		int iteration = 0;
@@ -207,7 +221,7 @@ public class HomeController {
 			iteration++;
 			oldSum = sum;
 			sum = 0;
-			for (Vertex vertex : service.vertices) {
+			for (Vertex vertex : service.getVertices()) {
 				service.calculatePermanence(vertex);
 				float currentPermanence = vertex.getPermanence();
 				if (currentPermanence == 1) {
@@ -245,7 +259,7 @@ public class HomeController {
 
 	private List<String> getNeighboringCommunities(Vertex vertex) {
 		List<String> communities = new ArrayList<>();
-		for (Vertex vertexCom : service.vertices) {
+		for (Vertex vertexCom : service.getVertices()) {
 			if (!vertex.getCommunity().equals(vertexCom.getCommunity()) && !communities.contains(vertexCom.getCommunity())) {
 				communities.add(vertexCom.getCommunity());
 			}
