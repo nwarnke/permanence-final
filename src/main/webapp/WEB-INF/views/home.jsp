@@ -23,5 +23,8 @@
             <input type="submit">
         </form>
     <iframe id="uploadTrg" name="uploadTrg" onload="load()" style="display:none"></iframe>
+    <div id="warning" style="display:none">
+        <p class="warning">Unable to parse input file</p>
+    </div>
     </body>
 </html>
