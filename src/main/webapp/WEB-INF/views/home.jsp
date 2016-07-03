@@ -8,8 +8,8 @@
     var jsonarry;
     function displayValues(){
         if(jsonarry != null) {
-            console.log(jsonarry.nodes.length);
-            console.log(jsonarry.links.length);
+            document.getElementById("numOfNodes").innerHTML = jsonarry.nodes.length;
+            document.getElementById("numOfEdges").innerHTML = jsonarry.links.length;
         }
     }
 </script>
@@ -43,7 +43,14 @@
         </div>
     </div>
     <div class="singlecontent">
-        <p>helllllooooo</p>
+        <ul>
+            <li>
+                <span>Number of nodes: <div id="numOfNodes"></div></span>
+            </li>
+            <li>
+                <span>Number of edges: <div id="numOfEdges"></div></span>
+            </li>
+        </ul>
     </div>
 </div>
 </body>
