@@ -17,6 +17,10 @@ function load() {
 
     var color = d3.scale.category20();
 
+    var div = d3.select("body").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 0);
+
     var force = d3.layout.force()
         .charge(-120)
 
@@ -39,6 +43,19 @@ function load() {
     var node = svg.selectAll('.node')
         .data(jsonarry.nodes)
         .enter().append('circle')
+        .on("mouseover", function (d) {
+            div.transition()
+                .duration(200)
+                .style("opacity", .9);
+            div.html("<ul><li><strong>Name: </strong>"+d.name+"</li><li><strong>Community: </strong>"+d.group+"</li><li><strong>Permanence: </strong>"+d.permanence+"</li></ul>")
+                .style("left", (d3.event.pageX) + "px")
+                .style("top", (d3.event.pageY - 28) + "px");
+        })
+        .on("mouseout", function (d) {
+            div.transition()
+                .duration(500)
+                .style("opacity", 0);
+        })
         .attr('class', 'node')
         .attr("r", 5)
         .style("fill", function (d) {
@@ -55,6 +72,16 @@ function load() {
         .text(function (d) {
             return d.name;
         });
+
+    // node.on("mouseover", function (d) {
+    //     console.log("mouseover event");
+    //     div.html("<p>Hello world</p>")
+    //
+    // });
+    // node.on("mouseout", function (d) {
+    //     console.log("mouseout event");
+    // });
+
 
     force.on("tick", function () {
         link.attr("x1", function (d) {
