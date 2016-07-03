@@ -6,7 +6,7 @@ function load() {
     }
 
     var jsonarry;
-    var nominal_stroke = 1.5;
+    var nominal_stroke = .5;
     try {
         jsonarry = JSON.parse(data);
     } catch (e) {
@@ -19,7 +19,7 @@ function load() {
 
     var force = d3.layout.force()
         .charge(-120)
-        .linkDistance(30)
+
         .size([width, height])
         .nodes(jsonarry.nodes)
         .links(jsonarry.links);
@@ -47,24 +47,38 @@ function load() {
         .call(force.drag);
 
 
+    var texts = svg.selectAll("text.label")
+        .data(jsonarry.nodes)
+        .enter().append("text")
+        .attr("class", "label")
+        .attr("fill", "black")
+        .text(function (d) {
+            return d.name;
+        });
+
     force.on("tick", function () {
         link.attr("x1", function (d) {
             return d.source.x;
-        })
-            .attr("y1", function (d) {
-                return d.source.y;
-            })
-            .attr("x2", function (d) {
-                return d.target.x;
-            })
-            .attr("y2", function (d) {
-                return d.target.y;
-            })
-        ;
+        }).attr("y1", function (d) {
+            return d.source.y;
+        }).attr("x2", function (d) {
+            return d.target.x;
+        }).attr("y2", function (d) {
+            return d.target.y;
+        });
 
-        node.attr("cx", function(d) { return d.x = Math.max(radius, Math.min(width - radius, d.x)); })
-            .attr("cy", function(d) { return d.y = Math.max(radius, Math.min(height - radius, d.y)); });
+        node.attr("cx", function (d) {
+            return d.x = Math.max(radius, Math.min(width - radius, d.x));
+        }).attr("cy", function (d) {
+            return d.y = Math.max(radius, Math.min(height - radius, d.y));
+        });
+
+        texts.attr("transform", function (d) {
+            return "translate(" + (d.x + 5) + "," + d.y + ")";
+        });
+
     });
 
     force.start();
 }
+
