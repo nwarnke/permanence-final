@@ -23,6 +23,10 @@
            load(data);
         });
     }
+
+    function getLinkDistance(){
+        return $("#linkDistance").value;
+    }
 </script>
 <script type="text/javascript">
     <%@ include file="../js/graph.js"%>
@@ -63,6 +67,8 @@
         </ul>
         <br>
     </div>
+
+
     <button type="button" onclick="maxPermanence()">Max Permanence</button>
     <br>
     <br>

@@ -27,6 +27,7 @@ function load(data) {
     var force = d3.layout.force()
         .charge(-120)
         .linkStrength(.2)
+        .linkDistance(15)
         .size([width, height])
         .nodes(jsonarry.nodes)
         .links(jsonarry.links);
@@ -107,6 +108,7 @@ function load(data) {
             exit_highlight();
         })
         .on("click", function(d){
+            
             div.transition()
                 .duration(100)
                 .style("opacity", .9);
