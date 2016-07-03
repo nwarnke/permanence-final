@@ -26,7 +26,7 @@ function load(data) {
 
     var force = d3.layout.force()
         .charge(-120)
-
+        .linkStrength(.2)
         .size([width, height])
         .nodes(jsonarry.nodes)
         .links(jsonarry.links);
@@ -112,3 +112,6 @@ function load(data) {
     force.start();
 }
 
+function updateLinkDistance(){
+
+}
