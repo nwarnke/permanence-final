@@ -45,9 +45,9 @@ function load() {
         .enter().append('circle')
         .on("mouseover", function (d) {
             div.transition()
-                .duration(200)
+                .duration(100)
                 .style("opacity", .9);
-            div.html("<ul><li><strong>Name: </strong>"+d.name+"</li><li><strong>Community: </strong>"+d.group+"</li><li><strong>Permanence: </strong>"+d.permanence+"</li></ul>")
+            div.html("<ul><li><strong>Name: </strong>" + d.name + "</li><li><strong>Community: </strong>" + d.group + "</li><li><strong>Permanence: </strong>" + d.permanence + "</li></ul>")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
         })
