@@ -5,7 +5,7 @@ function load() {
         return;
     }
 
-    var jsonarry;
+    
     var nominal_stroke = .5;
     try {
         jsonarry = JSON.parse(data);
@@ -13,7 +13,7 @@ function load() {
         d3.select('svg').remove();
         $("#warning").css("display", "inline");
     }
-    var width = 1500, height = 750, radius = 6;
+    var width = 1500, height = 600, radius = 6;
 
     var color = d3.scale.category20();
 

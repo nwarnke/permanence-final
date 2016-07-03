@@ -5,6 +5,15 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
 <script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
+    var jsonarry;
+    function displayValues(){
+        if(jsonarry != null) {
+            console.log(jsonarry.nodes.length);
+            console.log(jsonarry.links.length);
+        }
+    }
+</script>
+<script type="text/javascript">
     <%@ include file="../js/graph.js"%>
 </script>
 <style>
@@ -28,10 +37,13 @@
             <input type="file" name="file">
             <input type="submit">
         </form>
-        <iframe id="uploadTrg" name="uploadTrg" onload="load()" style="display:none"></iframe>
+        <iframe id="uploadTrg" name="uploadTrg" onload="load(); displayValues();" style="display:none"></iframe>
         <div id="warning" style="display:none">
             <p class="warning">Unable to parse input file</p>
         </div>
+    </div>
+    <div class="singlecontent">
+        <p>helllllooooo</p>
     </div>
 </div>
 </body>

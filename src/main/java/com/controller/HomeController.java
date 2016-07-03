@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -88,11 +89,12 @@ public class HomeController {
 
 	private JsonVertexLists convertToJsonList() {
 		JsonVertexLists jsonVertexLists = new JsonVertexLists();
+		DecimalFormat df = new DecimalFormat("#.##");
 		for (Vertex vertex : service.getVertices()) {
 			Node node = new Node();
 			node.setName(vertex.getName());
 			node.setGroup(vertex.getCommunity());
-			node.setPermanence(vertex.getPermanence());
+			node.setPermanence(df.format(vertex.getPermanence()));
 			jsonVertexLists.getNodes().add(node);
 			for (Vertex neighbor : vertex.getNeighbors()) {
 				Link link = new Link();

@@ -3,7 +3,7 @@ package com.dto;
 public class Node {
     private String name;
     private String group;
-    private float permanence;
+    private String permanence;
 
     public String getName() {
         return name;
@@ -21,11 +21,11 @@ public class Node {
         this.group = group;
     }
 
-    public float getPermanence() {
+    public String getPermanence() {
         return permanence;
     }
 
-    public void setPermanence(float permanence) {
+    public void setPermanence(String permanence) {
         this.permanence = permanence;
     }
 }
