@@ -43,6 +43,54 @@ function load(data) {
         .attr('class', 'link')
         .style("stroke-width", nominal_stroke);
 
+    var highlight_node = null, focus_node = null;
+    var default_link_color = "black";
+    var highlight_color = "blue";
+    var linkedByIndex = {};
+
+    jsonarry.links.forEach(function(d){
+        linkedByIndex[d.source + "," + d.target] = true;
+    });
+
+    function set_highlight(d)
+    {
+        // svg.style("cursor","pointer");
+        if (focus_node!==null) d = focus_node;
+        highlight_node = d;
+
+        if (highlight_color!="white")
+        {
+            node.style("stroke", function(o){
+                return isConnected(d, o) ? highlight_color : "white";});
+            link.style("stroke", function(o) {
+                return o.source.index == d.index || o.target.index == d.index ? highlight_color : ((isNumber(o.score) && o.score>=0)?color(o.score):default_link_color);
+            });
+        }
+    }
+
+    function exit_highlight()
+    {
+        highlight_node = null;
+        if (focus_node===null)
+        {
+            // svg.style("cursor","move");
+            if (highlight_color!="white")
+            {
+                node.style("stroke", "white");
+                link.style("stroke", function(o) {return (isNumber(o.score) && o.score>=0)?color(o.score):default_link_color});
+            }
+
+        }
+    }
+
+    function isConnected(a, b) {
+        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+    }
+
+    function isNumber(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
     var node = svg.selectAll('.node')
         .data(jsonarry.nodes)
         .enter().append('circle')
@@ -53,11 +101,13 @@ function load(data) {
             div.html("<ul><li><strong>Name: </strong>" + d.name + "</li><li><strong>Community: </strong>" + d.group + "</li><li><strong>Permanence: </strong>" + d.permanence + "</li></ul>")
                 .style("left", (d3.event.pageX) + "px")
                 .style("top", (d3.event.pageY - 28) + "px");
+            set_highlight(d);
         })
         .on("mouseout", function (d) {
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
+            exit_highlight();
         })
         .attr('class', 'node')
         .attr("r", 5)
@@ -75,16 +125,6 @@ function load(data) {
         .text(function (d) {
             return d.name;
         });
-
-    // node.on("mouseover", function (d) {
-    //     console.log("mouseover event");
-    //     div.html("<p>Hello world</p>")
-    //
-    // });
-    // node.on("mouseout", function (d) {
-    //     console.log("mouseout event");
-    // });
-
 
     force.on("tick", function () {
         link.attr("x1", function (d) {
@@ -112,6 +152,3 @@ function load(data) {
     force.start();
 }
 
-function updateLinkDistance(){
-
-}
