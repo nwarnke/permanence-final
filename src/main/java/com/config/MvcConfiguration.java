@@ -1,6 +1,5 @@
 package com.config;
 
-import com.service.Service;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +21,6 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter{
 		resolver.setPrefix("/WEB-INF/views/");
 		resolver.setSuffix(".jsp");
 		return resolver;
-	}
-
-	@Bean
-	public Service getService(){
-		return new Service();
 	}
 
 	@Override

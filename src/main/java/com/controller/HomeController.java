@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,19 +29,16 @@ public class HomeController {
 
 	private Service service;
 
-	@Inject
-	public HomeController(Service service) {
-		this.service = service;
-	}
-
 	@RequestMapping(value="/")
 	public ModelAndView test(HttpServletResponse response) throws IOException{
+		service = new Service();
 		return new ModelAndView("home");
 	}
 
 	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
-	public JsonVertexLists upload(@RequestParam("file") MultipartFile file) throws IOException {
+	public JsonVertexLists upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+		service = new Service();
 		service.setVertices(new ArrayList<Vertex>());
 		InputStream inputStream = file.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -80,13 +80,16 @@ public class HomeController {
 		}
 
 		calculatePermanenceForAllVertices();
+		request.getSession().setAttribute("vertices", service.getVertices());
 		return convertToJsonList();
 
 	}
 
 	@RequestMapping(value="maxpermanence", method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
-	public JsonVertexLists getMaxPermanence(){
+	public JsonVertexLists getMaxPermanence(HttpServletRequest request){
+		service = new Service();
+		service.setVertices((List<Vertex>) request.getSession().getAttribute("vertices"));
 		maxPermanence();
 		calculatePermanenceForAllVertices();
 		return convertToJsonList();
