@@ -88,6 +88,7 @@ public class HomeController {
 	@ResponseBody
 	public JsonVertexLists getMaxPermanence(){
 		maxPermanence();
+		calculatePermanenceForAllVertices();
 		return convertToJsonList();
 	}
 
