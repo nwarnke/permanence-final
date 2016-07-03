@@ -6,11 +6,22 @@
 <script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     var jsonarry;
+    function loadGraph(){
+        load(window["uploadTrg"].document.body.innerText);
+    }
+
     function displayValues(){
         if(jsonarry != null) {
-            document.getElementById("numOfNodes").innerHTML = jsonarry.nodes.length;
-            document.getElementById("numOfEdges").innerHTML = jsonarry.links.length;
+            document.getElementById("numOfNodes").innerHTML = "Number of nodes: "+jsonarry.nodes.length;
+            document.getElementById("numOfEdges").innerHTML = "Number of edges: "+jsonarry.links.length;
+            document.getElementById("numbers").style.display = "inline";
         }
+    }
+
+    function maxPermanence(){
+        $.get("/maxpermanence", function(data){
+           load(data);
+        });
     }
 </script>
 <script type="text/javascript">
@@ -32,26 +43,29 @@
         <h1>Interactive Permanence Example</h1>
         <p>Upload a graph to begin.</p>
     </div>
-    <div class="singlecontent">
         <form action="<c:url value="/upload"/>" enctype="multipart/form-data" method="post" target="uploadTrg">
-            <input type="file" name="file">
+            <input type="file" name="file"><br><br>
             <input type="submit">
+            <br><br>
         </form>
-        <iframe id="uploadTrg" name="uploadTrg" onload="load(); displayValues();" style="display:none"></iframe>
+        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();" style="display:none"></iframe>
         <div id="warning" style="display:none">
             <p class="warning">Unable to parse input file</p>
         </div>
-    </div>
-    <div class="singlecontent">
+    <div id="numbers" style="display:none">
         <ul>
             <li>
-                <span>Number of nodes: <div id="numOfNodes"></div></span>
+                <div id="numOfNodes"></div>
             </li>
             <li>
-                <span>Number of edges: <div id="numOfEdges"></div></span>
+                <div id="numOfEdges"></div>
             </li>
         </ul>
+        <br>
     </div>
+    <button type="button" onclick="maxPermanence()">Max Permanence</button>
+    <br>
+    <br>
 </div>
 </body>
 </html>

@@ -80,12 +80,17 @@ public class HomeController {
 		}
 
 		calculatePermanenceForAllVertices();
-		maxPermanence();
-		calculatePermanenceForAllVertices();
-
 		return convertToJsonList();
 
 	}
+
+	@RequestMapping(value="maxpermanence", method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public JsonVertexLists getMaxPermanence(){
+		maxPermanence();
+		return convertToJsonList();
+	}
+
 
 	private JsonVertexLists convertToJsonList() {
 		JsonVertexLists jsonVertexLists = new JsonVertexLists();

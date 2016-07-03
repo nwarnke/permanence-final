@@ -1,5 +1,4 @@
-function load() {
-    var data = window["uploadTrg"].document.body.innerText;
+function load(data) {
     $("#warning").css("display", "none");
     if (data.length == 0) {
         return;
@@ -8,7 +7,11 @@ function load() {
     
     var nominal_stroke = .5;
     try {
-        jsonarry = JSON.parse(data);
+        if(data.nodes != null){
+         jsonarry = data;
+        }else {
+            jsonarry = JSON.parse(data);
+        }
     } catch (e) {
         d3.select('svg').remove();
         $("#warning").css("display", "inline");
