@@ -64,6 +64,8 @@ function load(data) {
                 return isConnected(d, o) ? highlight_color : "white";});
             link.style("stroke", function(o) {
                 return o.source.index == d.index || o.target.index == d.index ? highlight_color : ((isNumber(o.score) && o.score>=0)?color(o.score):default_link_color);
+            }).style("stroke-width", function(o){
+                return o.source.index == d.index || o.target.index == d.index ? 2 : ((isNumber(o.score) && o.score>=0)?color(o.score):nominal_stroke);
             });
         }
     }
@@ -77,7 +79,8 @@ function load(data) {
             if (highlight_color!="white")
             {
                 node.style("stroke", "white");
-                link.style("stroke", function(o) {return (isNumber(o.score) && o.score>=0)?color(o.score):default_link_color});
+                link.style("stroke", function(o) {return (isNumber(o.score) && o.score>=0)?color(o.score):default_link_color})
+                    .style("stroke-width", nominal_stroke);
             }
 
         }
