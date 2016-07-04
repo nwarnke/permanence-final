@@ -16,7 +16,7 @@ function load(data) {
         d3.select('svg').remove();
         $("#warning").css("display", "inline");
     }
-    var width = 1500, height = 700, radius = 6;
+    var width = 1500, height = 500, radius = 6;
 
     var color = d3.scale.category20();
 

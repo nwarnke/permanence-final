@@ -21,6 +21,7 @@
     function maxPermanence(){
         $.get("/maxpermanence", function(data){
            load(data);
+            window["uploadTrg"].document.body.innerText = JSON.stringify(data);
         });
     }
 
@@ -52,8 +53,9 @@
             <input type="submit">
             <br><br>
         </form>
+    Raw output:<br>
+        <iframe id="uploadTrg" name="uploadTrg" width="500" onload="loadGraph(); displayValues();"></iframe>
     <br>
-        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();"></iframe>
         <div id="warning" style="display:none">
             <p class="warning">Unable to parse input file</p>
         </div>
@@ -69,7 +71,6 @@
         <br>
     </div>
 
-    <br>
     <button type="button" onclick="maxPermanence()">Max Permanence</button>
     <br>
     <br>
