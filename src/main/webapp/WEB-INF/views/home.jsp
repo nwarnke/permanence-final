@@ -52,7 +52,7 @@
             <input type="submit">
             <br><br>
         </form>
-        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();" ></iframe>
+        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();" style="display:none"></iframe>
         <div id="warning" style="display:none">
             <p class="warning">Unable to parse input file</p>
         </div>
