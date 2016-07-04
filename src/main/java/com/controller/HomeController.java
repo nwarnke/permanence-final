@@ -66,7 +66,9 @@ public class HomeController {
             if (vertex.getCommunity() == null) {
                 vertex.setCommunity(getCharForNumber(community));
                 for (Vertex neighbor : vertex.getNeighbors()) {
-                    neighbor.setCommunity(getCharForNumber(community));
+                    if(neighbor.getCommunity() == null) {
+                        neighbor.setCommunity(getCharForNumber(community));
+                    }
                 }
                 community++;
             }
@@ -111,7 +113,6 @@ public class HomeController {
                 Link link = new Link();
                 link.setSource(service.getVertices().indexOf(new Vertex(vertex.getName())));
                 link.setTarget(service.getVertices().indexOf(new Vertex(neighbor.getName())));
-                link.setValue(5);
                 jsonVertexLists.getLinks().add(link);
             }
 

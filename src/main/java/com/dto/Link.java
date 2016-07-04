@@ -3,7 +3,6 @@ package com.dto;
 public class Link {
     private int source;
     private int target;
-    private int value;
 
     public int getSource() {
         return source;
@@ -21,11 +20,4 @@ public class Link {
         this.target = target;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
-    }
 }

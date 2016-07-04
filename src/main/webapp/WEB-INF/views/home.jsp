@@ -52,7 +52,8 @@
             <input type="submit">
             <br><br>
         </form>
-        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();" style="display:none"></iframe>
+    <br>
+        <iframe id="uploadTrg" name="uploadTrg" onload="loadGraph(); displayValues();"></iframe>
         <div id="warning" style="display:none">
             <p class="warning">Unable to parse input file</p>
         </div>
@@ -68,7 +69,7 @@
         <br>
     </div>
 
-
+    <br>
     <button type="button" onclick="maxPermanence()">Max Permanence</button>
     <br>
     <br>
