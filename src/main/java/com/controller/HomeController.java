@@ -5,6 +5,7 @@ import com.dto.Link;
 import com.dto.Node;
 import com.dto.Vertex;
 import com.service.Service;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,18 +28,15 @@ import java.util.List;
 @Controller
 public class HomeController {
 
-	private Service service;
-
 	@RequestMapping(value="/")
 	public ModelAndView test(HttpServletResponse response) throws IOException{
-		service = new Service();
 		return new ModelAndView("home");
 	}
 
-	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value="upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public JsonVertexLists upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
-		service = new Service();
+		Service service = new Service();
 		service.setVertices(new ArrayList<Vertex>());
 		InputStream inputStream = file.getInputStream();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -56,7 +54,7 @@ public class HomeController {
 			}
 			firstVertex = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0])));
 			secondVertex = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1])));
-			addEdge(firstVertex, secondVertex);
+			addEdge(firstVertex, secondVertex, service);
 		}
 		inputStream.close();
 		reader.close();
@@ -79,24 +77,24 @@ public class HomeController {
 			previous = next;
 		}
 
-		calculatePermanenceForAllVertices();
+		calculatePermanenceForAllVertices(service);
 		request.getSession().setAttribute("vertices", service.getVertices());
-		return convertToJsonList();
+		return convertToJsonList(service);
 
 	}
 
-	@RequestMapping(value="maxpermanence", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value="maxpermanence", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public JsonVertexLists getMaxPermanence(HttpServletRequest request){
-		service = new Service();
+		Service service = new Service();
 		service.setVertices((List<Vertex>) request.getSession().getAttribute("vertices"));
-		maxPermanence();
-		calculatePermanenceForAllVertices();
-		return convertToJsonList();
+		maxPermanence(service);
+		calculatePermanenceForAllVertices(service);
+		return convertToJsonList(service);
 	}
 
 
-	private JsonVertexLists convertToJsonList() {
+	private JsonVertexLists convertToJsonList(Service service) {
 		JsonVertexLists jsonVertexLists = new JsonVertexLists();
 		DecimalFormat df = new DecimalFormat("#.##");
 		for (Vertex vertex : service.getVertices()) {
@@ -132,7 +130,7 @@ public class HomeController {
 		}
 	}
 
-	private void addEdge(Vertex firstVertex, Vertex secondVertex) {
+	private void addEdge(Vertex firstVertex, Vertex secondVertex, Service service) {
 		if (service.getVertices().contains(firstVertex) && service.getVertices().contains(secondVertex)) {
 			if (!service.getVertices().get(service.getVertices().indexOf(firstVertex)).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(secondVertex)))) {
 				firstVertex.getNeighbors().add(secondVertex);
@@ -141,13 +139,13 @@ public class HomeController {
 		}
 	}
 
-	private void calculatePermanenceForAllVertices() {
+	private void calculatePermanenceForAllVertices(Service service) {
 		for (Vertex vertex : service.getVertices()) {
 			service.calculatePermanence(vertex);
 		}
 	}
 
-	private void recalculatePermanenceWhenEdgeIsAddedOrRemovedFromLocalCommunity(String[] nodes) {
+	private void recalculatePermanenceWhenEdgeIsAddedOrRemovedFromLocalCommunity(String[] nodes, Service service) {
 		if (service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
 			Vertex v1 = service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0])));
 			float oldNumberOfInternalConnections = v1.getNumOfInternalConnections();
@@ -170,7 +168,7 @@ public class HomeController {
 		}
 	}
 
-	private void deleteEdge(String[] nodes) throws IOException {
+	private void deleteEdge(String[] nodes, Service service) throws IOException {
 		if (service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
 			if (service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))))) {
 				service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors()
@@ -186,7 +184,7 @@ public class HomeController {
 		}
 	}
 
-	private void addVertex(String input) throws IOException {
+	private void addVertex(String input, Service service) throws IOException {
 		String vertexName = input.split(" ")[0];
 		String vertexCommunity = input.split(" ")[1];
 		Vertex vertex = new Vertex(vertexName);
@@ -198,7 +196,7 @@ public class HomeController {
 		}
 	}
 
-	private void addEdge(String input) {
+	private void addEdge(String input, Service service) {
 		String[] nodes = input.split(" ");
 		if (nodes.length > 1 && service.getVertices().contains(new Vertex(nodes[0])) && service.getVertices().contains(new Vertex(nodes[1]))) {
 			if (!service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[0]))).getNeighbors().contains(service.getVertices().get(service.getVertices().indexOf(new Vertex(nodes[1]))))) {
@@ -214,7 +212,7 @@ public class HomeController {
 		}
 	}
 
-	private float maxPermanence() {
+	private float maxPermanence(Service service) {
 		int numOfVertices = service.getVertices().size();
 		float sum = 0;
 		float oldSum = -1;
@@ -235,7 +233,7 @@ public class HomeController {
 						service.calculatePermanence(neighbor);
 						currentNeighborPermanence = currentNeighborPermanence + neighbor.getPermanence();
 					}
-					final List<String> communities = getNeighboringCommunities(vertex);
+					final List<String> communities = getNeighboringCommunities(vertex, service);
 					String bestCommunity = vertex.getCommunity();
 					for (String community : communities) {      //For each neighboring community of V,
 						vertex.setCommunity(community);         //move the vertex into the community
@@ -260,7 +258,7 @@ public class HomeController {
 		return (sum / numOfVertices); //Return the permanence of the graph
 	}
 
-	private List<String> getNeighboringCommunities(Vertex vertex) {
+	private List<String> getNeighboringCommunities(Vertex vertex, Service service) {
 		List<String> communities = new ArrayList<>();
 		for (Vertex vertexCom : service.getVertices()) {
 			if (!vertex.getCommunity().equals(vertexCom.getCommunity()) && !communities.contains(vertexCom.getCommunity())) {
