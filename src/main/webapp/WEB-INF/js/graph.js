@@ -109,6 +109,7 @@ function load(data) {
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
+            d.clicked = !d.clicked;
             exit_highlight();
         })
         .on("click", function(d){
