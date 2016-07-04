@@ -3,7 +3,7 @@ package com.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Vertex {
+public class Vertex implements Comparable<Vertex>{
 
   private String name;
   private List<Vertex> neighbors = new ArrayList<Vertex>();
@@ -98,5 +98,12 @@ public class Vertex {
   @Override
   public int hashCode() {
     return name.hashCode();
+  }
+
+  @Override
+  public int compareTo(Vertex o) {
+    Integer first = this.getNeighbors().size();
+    Integer second = o.getNeighbors().size();
+    return second.compareTo(first);
   }
 }

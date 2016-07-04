@@ -4,6 +4,7 @@ public class Node {
     private String name;
     private String group;
     private String permanence;
+    private String degree;
 
     public String getName() {
         return name;
@@ -27,5 +28,13 @@ public class Node {
 
     public void setPermanence(String permanence) {
         this.permanence = permanence;
+    }
+
+    public String getDegree() {
+        return degree;
+    }
+
+    public void setDegree(String degree) {
+        this.degree = degree;
     }
 }
