@@ -53,6 +53,10 @@ function load(data) {
         linkedByIndex[d.source + "," + d.target] = true;
     });
 
+    jsonarry.nodes.forEach(function(d){
+       d.clicked = false;
+    });
+
     function set_highlight(d)
     {
         // svg.style("cursor","pointer");
@@ -108,13 +112,19 @@ function load(data) {
             exit_highlight();
         })
         .on("click", function(d){
-            
-            div.transition()
-                .duration(100)
-                .style("opacity", .9);
-            div.html("<ul><li><strong>Name: </strong>" + d.name + "</li><li><strong>Community: </strong>" + d.group + "</li><li><strong>Permanence: </strong>" + d.permanence + "</li></ul>")
-                .style("left", (d3.event.pageX) + "px")
-                .style("top", (d3.event.pageY - 28) + "px");
+            if(!d.clicked) {
+                div.transition()
+                    .duration(100)
+                    .style("opacity", .9);
+                div.html("<ul><li><strong>Name: </strong>" + d.name + "</li><li><strong>Community: </strong>" + d.group + "</li><li><strong>Permanence: </strong>" + d.permanence + "</li></ul>")
+                    .style("left", (d3.event.pageX) + "px")
+                    .style("top", (d3.event.pageY - 28) + "px");
+            }else{
+                div.transition()
+                    .duration(100)
+                    .style("opacity", 0);
+            }
+            d.clicked = !d.clicked;
         })
         .attr('class', 'node')
         .attr("r", 5)
