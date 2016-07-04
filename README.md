@@ -2,8 +2,8 @@
 
 Upload a file in the following format:
 
-<NODE> <TARGET>
-<NODE> <TARGET>
+"NODE" "TARGET"
+"NODE" "TARGET"
 ...
 
 Where <NODE> is the name of the node, and <TARGET> is the name of the target node. A space is used as a delimiter.
