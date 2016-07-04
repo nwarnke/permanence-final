@@ -2,7 +2,7 @@
 
 Upload a file in the following format:
 
-"NODE" "TARGET"
+"NODE" "TARGET"<br/>
 "NODE" "TARGET"
 ...
 
