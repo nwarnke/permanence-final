@@ -6,6 +6,9 @@
 <script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     var jsonarry;
+    var force;
+    var width = 1500, height = 500;
+    var linkDistanceVar = 15;
     function loadGraph(){
         load(window["uploadTrg"].document.body.innerText);
     }
@@ -25,8 +28,10 @@
         });
     }
 
-    function getLinkDistance(){
-        return $("#linkDistance").value;
+    function updateLinkDistance(){
+        force.stop();
+        linkDistanceVar = 100;
+        force.start();
     }
 </script>
 <script type="text/javascript">
@@ -72,6 +77,7 @@
     </div>
 
     <button type="button" onclick="maxPermanence()">Max Permanence</button>
+    <button type="button" onclick="updateLinkDistance()">Update Link Distance</button>
     <br>
     <br>
 </div>

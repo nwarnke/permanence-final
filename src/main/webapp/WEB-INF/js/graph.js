@@ -16,7 +16,7 @@ function load(data) {
         d3.select('svg').remove();
         $("#warning").css("display", "inline");
     }
-    var width = 1500, height = 500, radius = 6;
+    var radius = 6;
 
     var color = d3.scale.category20();
 
@@ -24,10 +24,12 @@ function load(data) {
         .attr("class", "tooltip")
         .style("opacity", 0);
 
-    var force = d3.layout.force()
+    force = d3.layout.force()
         .charge(-120)
         .linkStrength(.2)
-        .linkDistance(15)
+        .linkDistance(function(){
+            return linkDistanceVar;
+        })
         .size([width, height])
         .nodes(jsonarry.nodes)
         .links(jsonarry.links);
