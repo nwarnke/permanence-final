@@ -5,37 +5,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>
 <script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    var jsonarry;
-    var force;
-    var width = 1500, height = 500;
-    var linkDistanceVar = 15;
-    function loadGraph(){
-        load(window["uploadTrg"].document.body.innerText);
-    }
-
-    function displayValues(){
-        if(jsonarry != null) {
-            document.getElementById("numOfNodes").innerHTML = "Number of nodes: "+jsonarry.nodes.length;
-            document.getElementById("numOfEdges").innerHTML = "Number of edges: "+jsonarry.links.length;
-            document.getElementById("numbers").style.display = "inline";
-        }
-    }
-
-    function maxPermanence(){
-        $.get("/maxpermanence", function(data){
-           load(data);
-            window["uploadTrg"].document.body.innerText = JSON.stringify(data);
-        });
-    }
-
-    function updateLinkDistance(){
-        force.stop();
-        linkDistanceVar = 100;
-        force.start();
-    }
-</script>
-<script type="text/javascript">
     <%@ include file="../js/graph.js"%>
+    <%@include file="../js/default.js"%>
 </script>
 <style>
     <%@ include file="../css/graph.css"%>
@@ -47,7 +18,7 @@
     <title>Home</title>
 
 </head>
-<body id="body">
+<body id="body" onload="loadValues()">
 <div id="container">
     <div class="header">
         <h1>Interactive Permanence Example</h1>
@@ -72,12 +43,16 @@
             <li>
                 <div id="numOfEdges"></div>
             </li>
+            <li>
+                <div id="permanenceOfGraph"></div>
+            </li>
         </ul>
         <br>
     </div>
 
+    <input type="text" id="linkDist" size="5"><br>
+    <button type="button" onclick="updateLinkDistance()">Update Link Distance</button><br><br>
     <button type="button" onclick="maxPermanence()">Max Permanence</button>
-    <button type="button" onclick="updateLinkDistance()">Update Link Distance</button>
     <br>
     <br>
 </div>

@@ -74,9 +74,9 @@ public class HomeController {
             }
         }
 
-        calculatePermanenceForAllVertices(service);
+        final float permanenceOfGraph = calculatePermanenceForAllVertices(service);
         request.getSession().setAttribute("vertices", service.getVertices());
-        return convertToJsonList(service);
+        return convertToJsonList(service, permanenceOfGraph);
 
     }
 
@@ -85,9 +85,9 @@ public class HomeController {
     public JsonVertexLists getMaxPermanence(HttpServletRequest request) {
         Service service = new Service();
         service.setVertices((List<Vertex>) request.getSession().getAttribute("vertices"));
-        maxPermanence(service);
+        final float permanenceOfGraph = maxPermanence(service);
         calculatePermanenceForAllVertices(service);
-        return convertToJsonList(service);
+        return convertToJsonList(service, permanenceOfGraph);
     }
 
     private boolean eachVertexIsAssignedACommunity(Service service) {
@@ -99,9 +99,10 @@ public class HomeController {
         return true;
     }
 
-    private JsonVertexLists convertToJsonList(Service service) {
+    private JsonVertexLists convertToJsonList(Service service, float permanenceOfGraph) {
         JsonVertexLists jsonVertexLists = new JsonVertexLists();
         DecimalFormat df = new DecimalFormat("#.##");
+        jsonVertexLists.setPermanenceOfGraph(String.valueOf(df.format(permanenceOfGraph)));
         for (Vertex vertex : service.getVertices()) {
             Node node = new Node();
             node.setName(vertex.getName());
@@ -144,10 +145,13 @@ public class HomeController {
         }
     }
 
-    private void calculatePermanenceForAllVertices(Service service) {
+    private float calculatePermanenceForAllVertices(Service service) {
+        float sum = 0;
         for (Vertex vertex : service.getVertices()) {
             service.calculatePermanence(vertex);
+            sum =  sum + vertex.getPermanence();
         }
+        return sum / service.getVertices().size();
     }
 
     private void recalculatePermanenceWhenEdgeIsAddedOrRemovedFromLocalCommunity(String[] nodes, Service service) {
