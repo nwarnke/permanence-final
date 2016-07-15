@@ -23,7 +23,6 @@ import java.io.InputStreamReader;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 @Controller
@@ -66,7 +65,7 @@ public class HomeController {
             if (vertex.getCommunity() == null) {
                 vertex.setCommunity(getCharForNumber(community));
                 for (Vertex neighbor : vertex.getNeighbors()) {
-                    if(neighbor.getCommunity() == null) {
+                    if (neighbor.getCommunity() == null) {
                         neighbor.setCommunity(getCharForNumber(community));
                     }
                 }
@@ -86,7 +85,6 @@ public class HomeController {
         Service service = new Service();
         service.setVertices((List<Vertex>) request.getSession().getAttribute("vertices"));
         final float permanenceOfGraph = maxPermanence(service);
-        calculatePermanenceForAllVertices(service);
         return convertToJsonList(service, permanenceOfGraph);
     }
 
@@ -149,7 +147,7 @@ public class HomeController {
         float sum = 0;
         for (Vertex vertex : service.getVertices()) {
             service.calculatePermanence(vertex);
-            sum =  sum + vertex.getPermanence();
+            sum = sum + vertex.getPermanence();
         }
         return sum / service.getVertices().size();
     }
@@ -160,9 +158,9 @@ public class HomeController {
             float oldNumberOfInternalConnections = v1.getNumOfInternalConnections();
             float oldTotalNumberOfConnections = v1.getTotalNumOfConnections();
             float oldClusteringCoefficient = v1.getClusteringCoefficient();
-            service.getMaximumNumberOfExternalConnections(v1);
-            service.getNumberOfInternalConnections(v1);
-            service.getClusteringCoefficient(v1);
+            service.findMaximumNumberOfExternalConnections(v1);
+            service.findNumberOfInternalConnections(v1);
+            service.findClusteringCoefficient(v1);
             v1.setTotalNumOfConnections(v1.getNeighbors().size());
             float updatedMaximumNumberOfEdgesToExternalCommunity = v1.getMaxNumOfExternalConnections();
             float updatedNumberOfInternalConnections = v1.getNumOfInternalConnections();
@@ -257,6 +255,10 @@ public class HomeController {
                             bestCommunity = vertex.getCommunity();
                             currentPermanence = updatedPermanence;
                         } else {
+                            service.calculatePermanence(vertex);
+                            for (Vertex neighbor : vertex.getNeighbors()) {
+                                service.calculatePermanence(neighbor);
+                            }
                             vertex.setCommunity(bestCommunity);
                         }
                     }
@@ -269,11 +271,14 @@ public class HomeController {
 
     private List<String> getNeighboringCommunities(Vertex vertex, Service service) {
         List<String> communities = new ArrayList<>();
-        for (Vertex vertexCom : service.getVertices()) {
-            if (!vertex.getCommunity().equals(vertexCom.getCommunity()) && !communities.contains(vertexCom.getCommunity())) {
-                communities.add(vertexCom.getCommunity());
+        for (Vertex neighbor : vertex.getNeighbors()) {
+            if (!vertex.getCommunity().equals(neighbor.getCommunity())) {
+                if(!communities.contains(neighbor.getCommunity())) {
+                    communities.add(neighbor.getCommunity());
+                }
             }
         }
+
         return communities;
     }
 

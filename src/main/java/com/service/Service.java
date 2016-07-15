@@ -8,16 +8,15 @@ public class Service {
     private static List<Vertex> vertices = new ArrayList<>();
 
     public static void calculatePermanence(Vertex vertex) {
-        getNumberOfInternalConnections(vertex);
-        getMaximumNumberOfExternalConnections(vertex);
+        findNumberOfInternalConnections(vertex);
+        findMaximumNumberOfExternalConnections(vertex);
         vertex.setTotalNumOfConnections(vertex.getNeighbors().size());
-        getClusteringCoefficient(vertex);
-        final float permanence = (vertex.getNumOfInternalConnections() / vertex.getMaxNumOfExternalConnections()) *
-                (1 / vertex.getTotalNumOfConnections()) - (1 - vertex.getClusteringCoefficient());
+        findClusteringCoefficient(vertex);
+        final float permanence = (vertex.getNumOfInternalConnections() / vertex.getMaxNumOfExternalConnections()) * (1 / vertex.getTotalNumOfConnections()) - (1 - vertex.getClusteringCoefficient());
         vertex.setPermanence(permanence);
     }
 
-    public static void getNumberOfInternalConnections(Vertex vertex) {
+    public static void findNumberOfInternalConnections(Vertex vertex) {
         float internalConnections = 0;
         for (Vertex neighbor : vertex.getNeighbors()) {
             try {
@@ -31,8 +30,10 @@ public class Service {
         vertex.setNumOfInternalConnections(internalConnections);
     }
 
-    public static void getMaximumNumberOfExternalConnections(Vertex vertex) {
+    public static void findMaximumNumberOfExternalConnections(Vertex vertex) {
+
         Map<String, Integer> communities = new HashMap<>();
+
         for (Vertex neighbor : vertex.getNeighbors()) {
             if (!neighbor.getCommunity().equals(vertex.getCommunity())) {
                 if (communities.containsKey(neighbor.getCommunity())) {
@@ -51,33 +52,30 @@ public class Service {
         }
     }
 
-    public static void getClusteringCoefficient(Vertex vertex) {
+    public static void findClusteringCoefficient(Vertex vertex) {
         float connectionsAmongNeighborsOfVertex = 0;
-        int numberOfNeighborsInCommunity = 0;
-        float totalPossibleNumberOfConnectionsAmongNeighborsOfVertex = 0;
-        for (Vertex node : vertices) {
-            node.setVisited(false);
-        }
+        float numberOfNeighborsInCommunity = vertex.getNumOfInternalConnections();
+        float totalPossibleNumberOfConnectionsAmongNeighborsOfVertex = numberOfNeighborsInCommunity * ((numberOfNeighborsInCommunity - 1));
+
         for (Vertex neighbor : vertex.getNeighbors()) {
             if (neighbor.getCommunity().equals(vertex.getCommunity())) {
                 for (Vertex secondNeighbor : neighbor.getNeighbors()) {
-                    if (secondNeighbor.getCommunity().equals(neighbor.getCommunity()) && !secondNeighbor.isVisited() &&
-                            vertex.getNeighbors().contains(new Vertex(secondNeighbor.getName()))) {
+                    if (secondNeighbor.getCommunity().equals(neighbor.getCommunity()) && vertex.getNeighbors().contains(new Vertex(secondNeighbor.getName()))) {
                         connectionsAmongNeighborsOfVertex++;
                     }
                 }
             }
-            neighbor.setVisited(true);
+
         }
-        for (Vertex neighbor : vertex.getNeighbors()) {
-            if (neighbor.getCommunity().equals(vertex.getCommunity())) {
-                numberOfNeighborsInCommunity++;
-            }
-        }
-        for (int i = numberOfNeighborsInCommunity - 1; i > 0; i--) {
-            totalPossibleNumberOfConnectionsAmongNeighborsOfVertex = i + totalPossibleNumberOfConnectionsAmongNeighborsOfVertex;
-        }
-        if (totalPossibleNumberOfConnectionsAmongNeighborsOfVertex > 0) {
+//        for (Vertex neighbor : vertex.getNeighbors()) {
+//            if (neighbor.getCommunity().equals(vertex.getCommunity())) {
+//                numberOfNeighborsInCommunity++;
+//            }
+//        }
+//        for (float i = numberOfNeighborsInCommunity - 1; i > 0; i--) {
+//            totalPossibleNumberOfConnectionsAmongNeighborsOfVertex = i + totalPossibleNumberOfConnectionsAmongNeighborsOfVertex;
+//        }
+        if (totalPossibleNumberOfConnectionsAmongNeighborsOfVertex > 1) {
             vertex.setClusteringCoefficient(connectionsAmongNeighborsOfVertex / totalPossibleNumberOfConnectionsAmongNeighborsOfVertex);
         } else {
             vertex.setClusteringCoefficient(0);
