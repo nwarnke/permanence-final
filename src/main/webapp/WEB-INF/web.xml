@@ -33,6 +33,10 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
+	<welcome-file-list>
+		<welcome-file>/WEB-INF/views/home.jsp</welcome-file>
+	</welcome-file-list>
+
 	<session-config>
 		<session-timeout>30</session-timeout>
 	</session-config>

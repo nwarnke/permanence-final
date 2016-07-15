@@ -6,7 +6,7 @@
 <script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     <%@ include file="../js/graph.js"%>
-    <%@include file="../js/default.js"%>
+    <%@ include file="../js/default.js"%>
 </script>
 <style>
     <%@ include file="../css/graph.css"%>
