@@ -4,12 +4,12 @@ function load(data) {
         return;
     }
 
-    
+
     var nominal_stroke = .5;
     try {
-        if(data.nodes != null){
-         jsonarry = data;
-        }else {
+        if (data.nodes != null) {
+            jsonarry = data;
+        } else {
             jsonarry = JSON.parse(data);
         }
     } catch (e) {
@@ -27,7 +27,7 @@ function load(data) {
     force = d3.layout.force()
         .charge(-120)
         .linkStrength(.2)
-        .linkDistance(function(){
+        .linkDistance(function () {
             return linkDistanceVar;
         })
         .size([width, height])
@@ -46,47 +46,101 @@ function load(data) {
         .attr('class', 'link')
         .style("stroke-width", nominal_stroke);
 
+    var groupPath = function (d) {
+        var ret = "M";
+            var hull = d3.geom.hull(d.values.map(function (i) {
+                var x = i.x;
+                var y = i.y;
+                console.log([x, y]);
+                console.log([i.x, i.y]);
+                return [i.x, i.y];
+            }));
+        console.log(hull);
+
+                hull = hull.join("L")
+            + "Z";
+        ret = ret.concat(hull);
+        console.log(hull);
+        console.log(ret);
+        return ret;
+    };
+
+    var fill = d3.scale.category10();
+
+    var nodes = d3.range(100).map(Object);
+
+    var groups = [];
+
+    jsonarry.nodes.forEach(function (node) {
+        var index = containsInGroup(node, groups);
+        if (index != -1) {
+            groups[index].values.push(node);
+        } else {
+            var entry = {};
+            entry.key = node.group;
+            entry.values = [];
+            entry.values.push(node);
+            groups.push(entry);
+        }
+    });
+
+    console.log(groups);
+
+    function containsInGroup(item, group) {
+        var index = -1;
+        for (var i = 0; i < group.length; i++) {
+            if (item.group == group[i].key) {
+                index = i;
+            }
+        }
+        return index;
+        // group.forEach(function(d){
+        //    if(d.key == item.group){
+        //        contained = true;
+        //    }
+        // });
+        // return contained;
+    }
+
     var highlight_node = null, focus_node = null;
     var default_link_color = "black";
     var highlight_color = "blue";
     var linkedByIndex = {};
-
-    jsonarry.links.forEach(function(d){
+    var groupFill = function(d, i) { return fill(i & 3); };
+    jsonarry.links.forEach(function (d) {
         linkedByIndex[d.source + "," + d.target] = true;
     });
 
-    jsonarry.nodes.forEach(function(d){
-       d.clicked = false;
+    jsonarry.nodes.forEach(function (d) {
+        d.clicked = false;
     });
 
-    function set_highlight(d)
-    {
+    function set_highlight(d) {
         // svg.style("cursor","pointer");
-        if (focus_node!==null) d = focus_node;
+        if (focus_node !== null) d = focus_node;
         highlight_node = d;
 
-        if (highlight_color!="white")
-        {
-            node.style("stroke", function(o){
-                return isConnected(d, o) ? highlight_color : "white";});
-            link.style("stroke", function(o) {
-                return o.source.index == d.index || o.target.index == d.index ? highlight_color : ((isNumber(o.score) && o.score>=0)?color(o.score):default_link_color);
-            }).style("stroke-width", function(o){
-                return o.source.index == d.index || o.target.index == d.index ? 2 : ((isNumber(o.score) && o.score>=0)?color(o.score):nominal_stroke);
+        if (highlight_color != "white") {
+            node.style("stroke", function (o) {
+                return isConnected(d, o) ? highlight_color : "white";
+            });
+            link.style("stroke", function (o) {
+                return o.source.index == d.index || o.target.index == d.index ? highlight_color : ((isNumber(o.score) && o.score >= 0) ? color(o.score) : default_link_color);
+            }).style("stroke-width", function (o) {
+                return o.source.index == d.index || o.target.index == d.index ? 2 : ((isNumber(o.score) && o.score >= 0) ? color(o.score) : nominal_stroke);
             });
         }
     }
 
-    function exit_highlight()
-    {
+    function exit_highlight() {
         highlight_node = null;
-        if (focus_node===null)
-        {
+        if (focus_node === null) {
             // svg.style("cursor","move");
-            if (highlight_color!="white")
-            {
+            if (highlight_color != "white") {
                 node.style("stroke", "white");
-                link.style("stroke", function(o) {return (isNumber(o.score) && o.score>=0)?color(o.score):default_link_color})
+                link.style("stroke", function (o) {
+                    return (isNumber(o.score) && o.score >= 0) ? color(o.score) : default_link_color
+                })
                     .style("stroke-width", nominal_stroke);
             }
 
@@ -111,20 +165,20 @@ function load(data) {
             div.transition()
                 .duration(500)
                 .style("opacity", 0);
-            if(d.clicked) {
+            if (d.clicked) {
                 d.clicked = !d.clicked;
             }
             exit_highlight();
         })
-        .on("click", function(d){
-            if(!d.clicked) {
+        .on("click", function (d) {
+            if (!d.clicked) {
                 div.transition()
                     .duration(100)
                     .style("opacity", .9);
                 div.html("<ul><li><strong>Name: </strong>" + d.name + "</li><li><strong>Community: </strong>" + d.group + "</li><li><strong>Permanence: </strong>" + d.permanence + "</li><li><strong>Degree: </strong>" + d.degree + "</li></ul>")
                     .style("left", (d3.event.pageX) + "px")
                     .style("top", (d3.event.pageY - 28) + "px");
-            }else{
+            } else {
                 div.transition()
                     .duration(100)
                     .style("opacity", 0);
@@ -168,6 +222,16 @@ function load(data) {
         texts.attr("transform", function (d) {
             return "translate(" + (d.x + 5) + "," + d.y + ")";
         });
+
+        svg.selectAll("path")
+            .data(groups)
+            .attr("d", groupPath)
+            .enter().insert("path", "circle")
+            .style("fill", groupFill)
+            .style("stroke", groupFill)
+            .style("stroke-width", 40)
+            .style("stroke-linejoin", "round")
+            .style("opacity", .2);
 
     });
 
