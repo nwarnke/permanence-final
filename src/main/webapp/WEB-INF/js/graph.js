@@ -46,61 +46,9 @@ function load(data) {
         .attr('class', 'link')
         .style("stroke-width", nominal_stroke);
 
-    var groupPath = function (d) {
-        var ret = "M";
-            var hull = d3.geom.hull(d.values.map(function (i) {
-                var x = i.x;
-                var y = i.y;
-                console.log([x, y]);
-                console.log([i.x, i.y]);
-                return [i.x, i.y];
-            }));
-        console.log(hull);
 
-                hull = hull.join("L")
-            + "Z";
-        ret = ret.concat(hull);
-        console.log(hull);
-        console.log(ret);
-        return ret;
-    };
 
-    var fill = d3.scale.category10();
 
-    var nodes = d3.range(100).map(Object);
-
-    var groups = [];
-
-    jsonarry.nodes.forEach(function (node) {
-        var index = containsInGroup(node, groups);
-        if (index != -1) {
-            groups[index].values.push(node);
-        } else {
-            var entry = {};
-            entry.key = node.group;
-            entry.values = [];
-            entry.values.push(node);
-            groups.push(entry);
-        }
-    });
-
-    console.log(groups);
-
-    function containsInGroup(item, group) {
-        var index = -1;
-        for (var i = 0; i < group.length; i++) {
-            if (item.group == group[i].key) {
-                index = i;
-            }
-        }
-        return index;
-        // group.forEach(function(d){
-        //    if(d.key == item.group){
-        //        contained = true;
-        //    }
-        // });
-        // return contained;
-    }
 
     var highlight_node = null, focus_node = null;
     var default_link_color = "black";
@@ -223,15 +171,6 @@ function load(data) {
             return "translate(" + (d.x + 5) + "," + d.y + ")";
         });
 
-        svg.selectAll("path")
-            .data(groups)
-            .attr("d", groupPath)
-            .enter().insert("path", "circle")
-            .style("fill", groupFill)
-            .style("stroke", groupFill)
-            .style("stroke-width", 40)
-            .style("stroke-linejoin", "round")
-            .style("opacity", .2);
 
     });
 
