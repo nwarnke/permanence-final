@@ -56,5 +56,8 @@
     <br>
     <br>
 </div>
+<div id="drawing" class="drawing"></div>
+<br>
 </body>
+
 </html>

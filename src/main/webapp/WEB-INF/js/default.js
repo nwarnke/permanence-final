@@ -1,6 +1,6 @@
 var jsonarry;
 var force;
-var width = 1500, height = 500;
+var width = 1000, height = 700;
 var linkDistanceVar = 15;
 function loadGraph(){
     load(window["uploadTrg"].document.body.innerText);

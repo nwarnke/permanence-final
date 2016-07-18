@@ -36,7 +36,7 @@ function load(data) {
 
     d3.select('svg').remove();
 
-    var svg = d3.select('body').append('svg')
+    var svg = d3.select(document.getElementById("drawing")).append('svg')
         .attr('width', width)
         .attr('height', height);
 
@@ -162,9 +162,9 @@ function load(data) {
         });
 
         node.attr("cx", function (d) {
-            return d.x = Math.max(radius, Math.min(width - radius, d.x));
+            return d.x;
         }).attr("cy", function (d) {
-            return d.y = Math.max(radius, Math.min(height - radius, d.y));
+            return d.y;
         }).style("fill", function (d) {
             return color(d.group);
         });
