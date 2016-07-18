@@ -32,3 +32,7 @@ function updateLinkDistance(){
 function loadValues(){
     document.getElementById("linkDist").value = 15;
 }
+
+function start() {
+    force.start();
+}

@@ -165,6 +165,8 @@ function load(data) {
             return d.x = Math.max(radius, Math.min(width - radius, d.x));
         }).attr("cy", function (d) {
             return d.y = Math.max(radius, Math.min(height - radius, d.y));
+        }).style("fill", function (d) {
+            return color(d.group);
         });
 
         texts.attr("transform", function (d) {
