@@ -20,6 +20,7 @@ function load(data) {
 
     var color = d3.scale.category20();
 
+
     var div = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
@@ -36,9 +37,20 @@ function load(data) {
 
     d3.select('svg').remove();
 
-    var svg = d3.select(document.getElementById("drawing")).append('svg')
+    // var outer = d3.select("#drawing")
+    //     .append("svg:svg")
+    //     .attr('width', width)
+    //     .attr('height', height);
+
+    var svg = d3.select("#drawing").append('svg')
+    // .append("svg:svg")
         .attr('width', width)
-        .attr('height', height);
+        .attr('height', height)
+        .attr("pointer-events", "all")
+        .append('svg:g')
+        .call(d3.behavior.zoom().on("zoom", rescale))
+        .append('svg:g')
+        .on("mousedown", mousedown);
 
     var link = svg.selectAll('.link')
         .data(jsonarry.links)
@@ -47,14 +59,18 @@ function load(data) {
         .style("stroke-width", nominal_stroke);
 
 
-
+    function mousedown() {
+        svg.call(d3.behavior.zoom().on("zoom"), rescale);
+    }
 
 
     var highlight_node = null, focus_node = null;
     var default_link_color = "black";
     var highlight_color = "blue";
     var linkedByIndex = {};
-    var groupFill = function(d, i) { return fill(i & 3); };
+    var groupFill = function (d, i) {
+        return fill(i & 3);
+    };
     jsonarry.links.forEach(function (d) {
         linkedByIndex[d.source + "," + d.target] = true;
     });
@@ -101,6 +117,16 @@ function load(data) {
 
     function isNumber(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    // rescale g
+    function rescale() {
+        var trans = d3.event.translate;
+        var scale = d3.event.scale;
+
+        svg.attr("transform",
+            "translate(" + trans + ")"
+            + " scale(" + scale + ")");
     }
 
     var node = svg.selectAll('.node')
