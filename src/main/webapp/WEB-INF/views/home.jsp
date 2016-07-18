@@ -2,8 +2,6 @@
 <%@page language="java" contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
 "http://www.w3.org/TR/html4/loose.dtd">
-<%--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" type="text/javascript"></script>--%>
-<%--<script src="//d3js.org/d3.v3.min.js" type="text/javascript"></script>--%>
 <script type="text/javascript">
     <%@ include file="../js/jquery.min.js"%>
     <%@ include file="../js/d3.v3.min.js"%>
