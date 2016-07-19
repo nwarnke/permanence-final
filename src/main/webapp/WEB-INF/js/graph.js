@@ -20,7 +20,6 @@ function load(data) {
 
     var color = d3.scale.category20();
 
-
     var div = d3.select("body").append("div")
         .attr("class", "tooltip")
         .style("opacity", 0);
@@ -37,31 +36,20 @@ function load(data) {
 
     d3.select('svg').remove();
 
-    // var outer = d3.select("#drawing")
-    //     .append("svg:svg")
-    //     .attr('width', width)
-    //     .attr('height', height);
-
     var svg = d3.select("#drawing").append('svg')
     // .append("svg:svg")
         .attr('width', width)
         .attr('height', height)
-        .attr("pointer-events", "all")
-        .append('svg:g')
-        .call(d3.behavior.zoom().on("zoom", rescale))
-        .append('svg:g')
-        .on("mousedown", mousedown);
+        .call(d3.behavior.zoom().on("zoom", function () {
+            svg.attr("transform", "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")")
+        }))
+        .append("g");
 
     var link = svg.selectAll('.link')
         .data(jsonarry.links)
         .enter().append('line')
         .attr('class', 'link')
         .style("stroke-width", nominal_stroke);
-
-
-    function mousedown() {
-        svg.call(d3.behavior.zoom().on("zoom"), rescale);
-    }
 
 
     var highlight_node = null, focus_node = null;
