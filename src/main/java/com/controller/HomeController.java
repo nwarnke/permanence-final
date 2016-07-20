@@ -1,6 +1,6 @@
 package com.controller;
 
-import com.dto.JsonVertexLists;
+import com.dto.JsonVertexList;
 import com.dto.Link;
 import com.dto.Node;
 import com.dto.Vertex;
@@ -35,7 +35,7 @@ public class HomeController {
 
     @RequestMapping(value = "upload", headers = "content-type=multipart/*", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public JsonVertexLists upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
+    public JsonVertexList upload(@RequestParam("file") MultipartFile file, HttpServletRequest request) throws IOException {
         Service service = new Service();
         service.setVertices(new ArrayList<Vertex>());
         InputStream inputStream = file.getInputStream();
@@ -81,11 +81,10 @@ public class HomeController {
 
     @RequestMapping(value = "maxpermanence", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public JsonVertexLists getMaxPermanence(HttpServletRequest request) {
+    public List<JsonVertexList> getMaxPermanence(HttpServletRequest request) {
         Service service = new Service();
         service.setVertices((List<Vertex>) request.getSession().getAttribute("vertices"));
-        final float permanenceOfGraph = maxPermanence(service);
-        return convertToJsonList(service, permanenceOfGraph);
+        return maxPermanence(service);
     }
 
     private boolean eachVertexIsAssignedACommunity(Service service) {
@@ -97,26 +96,26 @@ public class HomeController {
         return true;
     }
 
-    private JsonVertexLists convertToJsonList(Service service, float permanenceOfGraph) {
-        JsonVertexLists jsonVertexLists = new JsonVertexLists();
+    private JsonVertexList convertToJsonList(Service service, float permanenceOfGraph) {
+        JsonVertexList jsonVertexList = new JsonVertexList();
         DecimalFormat df = new DecimalFormat("#.##");
-        jsonVertexLists.setPermanenceOfGraph(String.valueOf(df.format(permanenceOfGraph)));
+        jsonVertexList.setPermanenceOfGraph(String.valueOf(df.format(permanenceOfGraph)));
         for (Vertex vertex : service.getVertices()) {
             Node node = new Node();
             node.setName(vertex.getName());
             node.setGroup(vertex.getCommunity());
             node.setPermanence(df.format(vertex.getPermanence()));
             node.setDegree(String.valueOf(vertex.getNeighbors().size()));
-            jsonVertexLists.getNodes().add(node);
+            jsonVertexList.getNodes().add(node);
             for (Vertex neighbor : vertex.getNeighbors()) {
                 Link link = new Link();
                 link.setSource(service.getVertices().indexOf(new Vertex(vertex.getName())));
                 link.setTarget(service.getVertices().indexOf(new Vertex(neighbor.getName())));
-                jsonVertexLists.getLinks().add(link);
+                jsonVertexList.getLinks().add(link);
             }
 
         }
-        return jsonVertexLists;
+        return jsonVertexList;
     }
 
 
@@ -219,7 +218,8 @@ public class HomeController {
         }
     }
 
-    private float maxPermanence(Service service) {
+    private List<JsonVertexList> maxPermanence(Service service) {
+        List<JsonVertexList> jsonVertexLists = new ArrayList<>();
         int numOfVertices = service.getVertices().size();
         float sum = 0;
         float oldSum = -1;
@@ -265,8 +265,9 @@ public class HomeController {
                     sum = sum + currentPermanence;
                 }
             }
+            jsonVertexLists.add(convertToJsonList(service, (sum / numOfVertices)));
         }
-        return (sum / numOfVertices); //Return the permanence of the graph
+        return jsonVertexLists;
     }
 
     private List<String> getNeighboringCommunities(Vertex vertex, Service service) {

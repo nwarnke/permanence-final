@@ -3,7 +3,7 @@ package com.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JsonVertexLists {
+public class JsonVertexList {
     private List<Node> nodes = new ArrayList<>();
     private List<Link> links = new ArrayList<>();
     private String permanenceOfGraph;
